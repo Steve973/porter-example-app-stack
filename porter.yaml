@@ -1,0 +1,119 @@
+# Optional indicator of the resource type of this file
+schemaType: Bundle
+
+# Version of the porter.yaml schema used by this file
+schemaVersion: 1.0.1
+
+# Name of the bundle
+name: example-app-stack
+
+# Version of the bundle. Change this each time you modify a published bundle
+version: 0.1.0
+
+# Description of the bundle and what it does
+description: "An example Porter configuration to install an application stack"
+
+# Registry where the bundle is published by default
+registry: "docker.io/steve973"
+
+# Declare and optionally configure the mixins used by the bundle
+mixins:
+  - exec
+  - helm3:
+      clientVersion: v3.14.4
+      repositories:
+        arangodb-charts:
+          url: "https://arangodb.github.io/kube-arangodb"
+        redpanda-charts:
+          url: "https://charts.redpanda.com"
+        traefik-charts:
+          url: "https://traefik.github.io/charts"
+
+install:
+  - helm3:
+      description: Install ArangoDB from the vendor chart
+      name: arangodb
+      chart: arangodb-charts/kube-arangodb
+      version: $arangodb-helm-chart-version
+      set:
+        global.name: arangodb
+        namespace: $arangodb-namespace
+  - helm3:
+      description: Install Redpanda from the vendor chart
+      name: redpanda
+      chart: redpanda-charts/redpanda/redpanda
+      version: $redpanda-helm-chart-version
+      set:
+        global.name: redpanda
+        namespace: $redpanda-namespace
+  - helm3:
+      description: Install Traefik from the vendor chart
+      name: traefik
+      chart: traefik-charts/traefik/traefik
+      version: $traefik-helm-chart-version
+      set:
+        global.name: traefik
+        namespace: $traefik-namespace
+
+upgrade:
+  - helm3:
+      description: Upgrade ArangoDB from the vendor chart
+      name: arangodb
+      chart: arangodb-charts/kube-arangodb
+      version: $arangodb-helm-chart-version
+      set:
+        global.name: arangodb
+        namespace: $arangodb-namespace
+  - helm3:
+      description: Upgrade Redpanda from the vendor chart
+      name: redpanda
+      chart: redpanda-charts/redpanda/redpanda
+      version: $redpanda-helm-chart-version
+      set:
+        global.name: redpanda
+        namespace: $redpanda-namespace
+  - helm3:
+      description: Upgrade Traefik from the vendor chart
+      name: traefik
+      chart: traefik-charts/traefik/traefik
+      version: $traefik-helm-chart-version
+      set:
+        global.name: traefik
+        namespace: $traefik-namespace
+
+uninstall:
+  - helm3:
+      description: "Uninstall ArangoDB"
+      namespace: $arangodb-namespace
+      releases:
+        - "arangodb"
+  - helm3:
+      description: "Uninstall Redpanda"
+      namespace: $redpanda-namespace
+      releases:
+        - "redpanda"
+  - helm3:
+      description: "Uninstall Traefik"
+      namespace: $traefik-namespace
+      releases:
+        - "traefik"
+
+parameters:
+  - name: arangodb-helm-chart-version
+    type: string
+    default: 1.2.40
+  - name: arangodb-namespace
+    type: string
+    default: arangodb
+  - name: redpanda-helm-chart-version
+    type: string
+    default: 5.7.39
+  - name: redpanda-namespace
+    type: string
+    default: redpanda
+  - name: traefik-helm-chart-version
+    type: string
+    default: 27.0.2
+  - name: traefik-namespace
+    type: string
+    default: traefik
