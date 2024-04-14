@@ -22,14 +22,22 @@ mixins:
   - helm3:
       clientVersion: v3.14.4
       repositories:
-        arangodb-charts:
-          url: "https://arangodb.github.io/kube-arangodb"
         redpanda-charts:
           url: "https://charts.redpanda.com"
+        arangodb-charts:
+          url: "https://arangodb.github.io/kube-arangodb"
         traefik-charts:
           url: "https://traefik.github.io/charts"
 
 install:
+  - helm3:
+      description: Install Redpanda from the vendor chart
+      name: redpanda
+      chart: redpanda-charts/redpanda
+      version: $redpanda-helm-chart-version
+      set:
+        global.name: redpanda
+        namespace: $redpanda-namespace
   - helm3:
       description: Install ArangoDB from the vendor chart
       name: arangodb
@@ -39,17 +47,9 @@ install:
         global.name: arangodb
         namespace: $arangodb-namespace
   - helm3:
-      description: Install Redpanda from the vendor chart
-      name: redpanda
-      chart: redpanda-charts/redpanda/redpanda
-      version: $redpanda-helm-chart-version
-      set:
-        global.name: redpanda
-        namespace: $redpanda-namespace
-  - helm3:
       description: Install Traefik from the vendor chart
       name: traefik
-      chart: traefik-charts/traefik/traefik
+      chart: traefik-charts/traefik
       version: $traefik-helm-chart-version
       set:
         global.name: traefik
