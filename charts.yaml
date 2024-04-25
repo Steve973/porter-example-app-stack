@@ -1,0 +1,17 @@
+charts:
+  - repo: https://charts.jetstack.io
+    name: jetstack-charts
+    chart: cert-manager
+    version: 1.14.4
+  - repo: https://charts.redpanda.com
+    name: redpanda-charts
+    chart: redpanda
+    version: 5.7.39
+  - repo: https://arangodb.github.io/kube-arangodb
+    name: arangodb-charts
+    chart: kube-arangodb
+    version: 1.2.40
+  - repo: https://traefik.github.io/charts
+    name: traefik-charts
+    chart: traefik
+    version: 27.0.2

@@ -21,99 +21,105 @@ mixins:
   - exec
   - helm3:
       clientVersion: v3.14.4
-      repositories:
-        redpanda-charts:
-          url: "https://charts.redpanda.com"
-        arangodb-charts:
-          url: "https://arangodb.github.io/kube-arangodb"
-        traefik-charts:
-          url: "https://traefik.github.io/charts"
+
+credentials:
+- name: kubeconfig
+  path: /home/nonroot/.kube/config
 
 install:
   - helm3:
+      description: Install cert manager for redpanda from the vendor chart
+      name: cert-manager
+      chart: ./charts/cert-manager
+      namespace: ${ bundle.parameters.certmanager-namespace }
+      set:
+        global.name: cert-manager
+        installCRDs: true
+  - helm3:
       description: Install Redpanda from the vendor chart
       name: redpanda
-      chart: redpanda-charts/redpanda
-      version: $redpanda-helm-chart-version
+      chart: ./charts/redpanda
+      namespace: ${ bundle.parameters.redpanda-namespace }
       set:
         global.name: redpanda
-        namespace: $redpanda-namespace
   - helm3:
       description: Install ArangoDB from the vendor chart
       name: arangodb
-      chart: arangodb-charts/kube-arangodb
-      version: $arangodb-helm-chart-version
+      chart: ./charts/kube-arangodb
+      namespace: ${ bundle.parameters.arangodb-namespace }
       set:
         global.name: arangodb
-        namespace: $arangodb-namespace
   - helm3:
       description: Install Traefik from the vendor chart
       name: traefik
-      chart: traefik-charts/traefik
-      version: $traefik-helm-chart-version
+      chart: ./charts/traefik
+      namespace: ${ bundle.parameters.traefik-namespace }
       set:
         global.name: traefik
-        namespace: $traefik-namespace
 
 upgrade:
   - helm3:
-      description: Upgrade ArangoDB from the vendor chart
-      name: arangodb
-      chart: arangodb-charts/kube-arangodb
-      version: $arangodb-helm-chart-version
+      description: Install cert manager for redpanda from the vendor chart
+      name: cert-manager
+      chart: ./charts/cert-manager
+      namespace: ${ bundle.parameters.certmanager-namespace }
       set:
-        global.name: arangodb
-        namespace: $arangodb-namespace
+        global.name: cert-manager
+        installCRDs: true
   - helm3:
       description: Upgrade Redpanda from the vendor chart
       name: redpanda
-      chart: redpanda-charts/redpanda/redpanda
-      version: $redpanda-helm-chart-version
+      chart: ./charts/redpanda
+      namespace: ${ bundle.parameters.redpanda-namespace }
       set:
         global.name: redpanda
-        namespace: $redpanda-namespace
+  - helm3:
+      description: Upgrade ArangoDB from the vendor chart
+      name: arangodb
+      chart: ./charts/kube-arangodb
+      namespace: ${ bundle.parameters.arangodb-namespace }
+      set:
+        global.name: arangodb
   - helm3:
       description: Upgrade Traefik from the vendor chart
       name: traefik
-      chart: traefik-charts/traefik/traefik
-      version: $traefik-helm-chart-version
+      chart: ./charts/traefik
+      namespace: ${ bundle.parameters.traefik-namespace }
       set:
         global.name: traefik
-        namespace: $traefik-namespace
 
 uninstall:
   - helm3:
-      description: "Uninstall ArangoDB"
-      namespace: $arangodb-namespace
+      description: "Uninstall cert-manager"
+      namespace: ${ bundle.parameters.certmanager-namespace }
       releases:
-        - "arangodb"
+        - "cert-manager"
   - helm3:
       description: "Uninstall Redpanda"
-      namespace: $redpanda-namespace
+      namespace: ${ bundle.parameters.redpanda-namespace }
       releases:
         - "redpanda"
   - helm3:
+      description: "Uninstall ArangoDB"
+      namespace: ${ bundle.parameters.arangodb-namespace }
+      releases:
+        - "arangodb"
+  - helm3:
       description: "Uninstall Traefik"
-      namespace: $traefik-namespace
+      namespace: ${ bundle.parameters.traefik-namespace }
       releases:
         - "traefik"
 
 parameters:
-  - name: arangodb-helm-chart-version
+  - name: certmanager-namespace
     type: string
-    default: 1.2.40
-  - name: arangodb-namespace
-    type: string
-    default: arangodb
-  - name: redpanda-helm-chart-version
-    type: string
-    default: 5.7.39
+    default: "cert-manager"
   - name: redpanda-namespace
     type: string
-    default: redpanda
-  - name: traefik-helm-chart-version
+    default: "redpanda"
+  - name: arangodb-namespace
     type: string
-    default: 27.0.2
+    default: "arangodb"
   - name: traefik-namespace
     type: string
-    default: traefik
+    default: "traefik"

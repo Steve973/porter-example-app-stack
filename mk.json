@@ -1,0 +1,13 @@
+{
+    "schemaType": "CredentialSet",
+    "schemaVersion": "1.0.1",
+    "name": "mk",
+    "credentials": [
+        {
+            "name": "kubeconfig",
+            "source": {
+                "path": "${HOME}/.kube/config"
+            }
+        }
+    ]
+}
